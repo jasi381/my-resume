@@ -146,9 +146,9 @@ class NetflixPortfolioApp {
   }
 
   setupScrollAnimations() {
-    // Create intersection observer for scroll animations
+    // Create intersection observer for scroll animations with better performance
     const observerOptions = {
-      threshold: 0.1,
+      threshold: 0.15,
       rootMargin: '0px 0px -50px 0px'
     };
 
@@ -156,27 +156,30 @@ class NetflixPortfolioApp {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
+          // Clean up will-change after animation
+          setTimeout(() => {
+            entry.target.style.willChange = 'auto';
+          }, 600);
+          // Stop observing after animation
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
 
-    // Add animation classes and observe elements
+    // Add animation classes and observe elements with reduced elements
     const animatedElements = [
       { selector: '.section-header', class: 'fade-in' },
       { selector: '.about-description', class: 'slide-in-left' },
       { selector: '.about-highlights', class: 'slide-in-right' },
-      { selector: '.about-stats', class: 'scale-in' },
       { selector: '.project-card', class: 'fade-in' },
-      { selector: '.skill-badge', class: 'fade-in' },
-      { selector: '.contact-item', class: 'slide-in-left' },
-      { selector: '.contact-form', class: 'slide-in-right' }
+      { selector: '.contact-form-container', class: 'slide-in-right' }
     ];
 
     animatedElements.forEach(({ selector, class: animationClass }) => {
       const elements = document.querySelectorAll(selector);
       elements.forEach((element, index) => {
         element.classList.add(animationClass);
-        element.style.transitionDelay = `${index * 0.1}s`;
+        element.style.transitionDelay = `${Math.min(index * 0.1, 0.5)}s`; // Cap delay
         observer.observe(element);
       });
     });
@@ -343,18 +346,24 @@ class NetflixPortfolioApp {
 
   setupParallaxEffects() {
     let ticking = false;
+    let isAnimating = true;
 
-    const handleScroll = () => {
-      if (!ticking) {
+    const handleScroll = utils.throttle(() => {
+      if (!ticking && isAnimating) {
         requestAnimationFrame(() => {
           this.updateParallax();
           ticking = false;
         });
         ticking = true;
       }
-    };
+    }, 16); // ~60fps
 
-    window.addEventListener('scroll', handleScroll);
+    // Stop animations when not visible
+    document.addEventListener('visibilitychange', () => {
+      isAnimating = !document.hidden;
+    });
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
   updateParallax() {
@@ -362,18 +371,23 @@ class NetflixPortfolioApp {
     const heroSection = document.querySelector('.hero');
     const phoneElement = document.querySelector('.phone-mockup');
 
-    // Apply subtle parallax to hero background
+    // Apply subtle parallax to hero background with will-change optimization
     if (heroSection && scrolled < window.innerHeight) {
-      const rate = scrolled * -0.3;
-      heroSection.style.transform = `translateY(${rate}px)`;
+      const rate = scrolled * -0.2; // Reduced for better performance
+      heroSection.style.transform = `translate3d(0, ${rate}px, 0)`;
+      heroSection.style.willChange = 'transform';
+    } else if (heroSection) {
+      heroSection.style.willChange = 'auto';
     }
 
-    // Enhanced floating animation for phone
+    // Enhanced floating animation for phone with reduced calculations
     if (phoneElement && scrolled < window.innerHeight) {
-      const time = Date.now() * 0.001;
-      const floatOffset = Math.sin(time) * 5 + Math.cos(time * 0.7) * 3;
-      const rotateOffset = Math.sin(time * 0.5) * 2;
-      phoneElement.style.transform = `translateY(${floatOffset}px) rotate(${rotateOffset}deg)`;
+      const time = performance.now() * 0.001;
+      const floatOffset = Math.sin(time) * 3; // Reduced amplitude
+      phoneElement.style.transform = `translate3d(0, ${floatOffset}px, 0)`;
+      phoneElement.style.willChange = 'transform';
+    } else if (phoneElement) {
+      phoneElement.style.willChange = 'auto';
     }
   }
 
