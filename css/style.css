@@ -42,6 +42,7 @@
   --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.8);
   --shadow-netflix: 0 8px 24px rgba(229, 9, 20, 0.3);
 
+
   /* Typography - Netflix uses Helvetica Neue but we'll use Inter/Roboto */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-secondary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -57,6 +58,7 @@
 
   /* Border Radius */
   --radius-sm: 4px;
+  --radius-xs: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
@@ -70,6 +72,7 @@
   --gradient-netflix: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
   --gradient-overlay: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
   --gradient-hero: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 20, 20, 0.8) 50%, rgba(0, 0, 0, 0.9) 100%);
+
 }
 
 /* ==========================================================================
@@ -192,13 +195,13 @@ img {
   background: var(--gradient-netflix);
   color: var(--netflix-white);
   box-shadow: var(--shadow-md);
-  border: 2px solid transparent;
+  border: none;
 }
+
 
 .btn-netflix:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-netflix);
-  color: var(--netflix-white);
+  box-shadow: var(--shadow-xl);
   background: var(--netflix-red-light);
 }
 
@@ -247,17 +250,19 @@ img {
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.9);
   z-index: 1000;
   transition: all var(--transition-smooth);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
 }
 
+
+
 .navbar.scrolled {
-  background: rgba(0, 0, 0, 0.98);
+  background: rgba(0, 0, 0, 0.95);
   box-shadow: var(--shadow-lg);
+  border-bottom-color: var(--border-secondary);
 }
 
 .nav-container {
@@ -269,12 +274,13 @@ img {
   justify-content: space-between;
   height: 80px;
   gap: var(--spacing-lg);
+  position: relative;
+  z-index: 2;
 }
 
 .nav-logo {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+  flex-direction: column; /* stack name and subtitle vertically */
   font-family: var(--font-primary);
   font-weight: 900;
   font-size: 1.5rem;
@@ -283,10 +289,31 @@ img {
   letter-spacing: 1px;
 }
 
+.nav-logo > .nav-logo-main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs); /* space between icon and name */
+}
+
+.footer-text a {
+  color: var(--netflix-red);
+  text-decoration: underline;
+}
+
+
 .nav-logo i {
   font-size: 2rem;
   color: var(--netflix-red);
 }
+
+.nav-logo-subtitle {
+  font-weight: 400;
+  font-size: 0.8rem; /* smaller subtitle */
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 
 .nav-menu {
   display: flex;
@@ -297,33 +324,68 @@ img {
 .nav-link {
   font-weight: 500;
   color: var(--text-primary);
-  padding: var(--spacing-xs) 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
   position: relative;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-smooth);
   text-transform: uppercase;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transition: all var(--transition-smooth);
 }
 
 .nav-link::after {
   content: '';
   position: absolute;
   bottom: -4px;
-  left: 0;
+  left: 50%;
   width: 0;
   height: 2px;
   background: var(--netflix-red);
-  transition: width var(--transition-smooth);
+  transition: all var(--transition-smooth);
+  transform: translateX(-50%);
 }
+
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--netflix-red);
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+  opacity: 1;
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
+  animation-duration: 2s;
+}
+
+.nav-link:hover {
+  background: rgba(229, 9, 20, 0.05);
+}
+
+.nav-link:hover::before {
+  border-color: rgba(229, 9, 20, 0.2);
 }
 
 .nav-cta {
@@ -489,24 +551,29 @@ img {
   position: relative;
 }
 
-/* Phone Mockup - Enhanced Netflix Style */
+/* Phone Mockup - Netflix Style */
 .phone-mockup {
   width: 280px;
   height: 560px;
   background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+  border: 2px solid var(--border-primary);
   border-radius: 30px;
   padding: 16px;
-  box-shadow:
-    var(--shadow-2xl),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-xl);
   position: relative;
-  animation: float 6s ease-in-out infinite;
+  animation: float-simple 6s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(1deg); }
+
+@keyframes float-simple {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
+
 
 .phone-screen {
   width: 100%;
@@ -515,8 +582,9 @@ img {
   border-radius: 24px;
   overflow: hidden;
   position: relative;
-  border: 2px solid #333;
+  border: 1px solid var(--border-primary);
 }
+
 
 .app-demo {
   background: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
@@ -574,7 +642,6 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-md);
   animation: pulse 2s ease-in-out infinite;
-  backdrop-filter: blur(10px);
 }
 
 .app-card:nth-child(2) {
@@ -740,18 +807,17 @@ img {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+  transition: all var(--transition-smooth);
   position: relative;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  contain: layout style paint;
-  will-change: transform;
+  border: 1px solid var(--border-primary);
 }
 
+
 .project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(229, 9, 20, 0.3);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--netflix-red);
 }
 
 .project-image {
@@ -776,13 +842,32 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.05),
+    rgba(0, 0, 0, 0.7)
+  );
+
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity var(--transition-smooth);
+  transition: all var(--transition-smooth);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
+
+.project-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  background-size: 200% 100%;
+  opacity: 0.3;
+}
+
 
 .project-card:hover .project-overlay {
   opacity: 1;
@@ -812,7 +897,10 @@ img {
 .project-link {
   width: 40px;
   height: 40px;
-  background: var(--netflix-red);
+  background:
+    rgba(255, 255, 255, 0.05),
+    var(--netflix-red);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -820,11 +908,44 @@ img {
   color: var(--netflix-white);
   font-size: 1rem;
   transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
+.project-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: all var(--transition-smooth);
+  border-radius: 50%;
+}
+
+
 .project-link:hover {
-  background: var(--netflix-red-light);
-  transform: scale(1.1);
+  background:
+    rgba(255, 255, 255, 0.05),
+    var(--netflix-red-light);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.project-link:hover::before {
+  opacity: 0.6;
+  animation-duration: 1.5s;
+}
+
+.project-link > * {
+  position: relative;
+  z-index: 2;
 }
 
 .project-content {
@@ -870,264 +991,10 @@ img {
 }
 
 /* ==========================================================================
-   Enterprise Solutions - Netflix Content Tiles Style
+   Legacy Enterprise Styles - Cleaned Up
    ========================================================================== */
 
-.enterprise-projects-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
-}
-
-.enterprise-project-card {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  transition: all var(--transition-smooth);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  height: auto;
-  min-height: 120px;
-}
-
-.enterprise-project-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.enterprise-card-backdrop {
-  display: none; /* Remove heavy background styling */
-}
-
-.enterprise-gradient-overlay {
-  display: none; /* Remove overlay for cleaner look */
-}
-
-.enterprise-pattern {
-  display: none; /* Remove pattern for minimal design */
-}
-
-.enterprise-card-content {
-  position: relative;
-  z-index: 4;
-  padding: var(--spacing-md);
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  color: var(--text-primary);
-}
-
-.enterprise-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-md);
-  position: relative;
-  backdrop-filter: blur(10px);
-}
-
-.enterprise-icon-container i {
-  font-size: 1.8rem;
-  color: var(--netflix-white);
-  z-index: 2;
-  position: relative;
-}
-
-.enterprise-icon-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  animation: enterprise-glow 3s ease-in-out infinite;
-}
-
-@keyframes enterprise-glow {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.3);
-    opacity: 0.8;
-  }
-}
-
-.enterprise-info {
-  flex: 1;
-}
-
-.enterprise-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-  color: var(--text-primary);
-  text-transform: none;
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-
-.enterprise-description {
-  color: var(--text-secondary);
-  line-height: 1.4;
-  margin-bottom: var(--spacing-xs);
-  font-size: 0.9rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.enterprise-features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-md);
-}
-
-.enterprise-feature {
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-sm);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--netflix-white);
-  backdrop-filter: blur(10px);
-}
-
-.enterprise-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
-}
-
-.enterprise-link {
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--netflix-white);
-  font-size: 0.9rem;
-  transition: all var(--transition-smooth);
-  text-decoration: none;
-  position: relative;
-  backdrop-filter: blur(10px);
-}
-
-.enterprise-link:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-  color: var(--netflix-white);
-}
-
-.enterprise-link::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: -35px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.9);
-  color: var(--netflix-white);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.enterprise-link:hover::after {
-  opacity: 1;
-}
-
-/* Netflix-style hover overlay */
-.enterprise-hover-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all var(--transition-smooth);
-  z-index: 5;
-  backdrop-filter: blur(5px);
-}
-
-.enterprise-project-card:hover .enterprise-hover-overlay {
-  opacity: 1;
-}
-
-.enterprise-play-button {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--spacing-md);
-  transition: all var(--transition-smooth);
-  position: relative;
-}
-
-.enterprise-play-button i {
-  font-size: 2rem;
-  color: var(--netflix-black);
-  margin-left: 4px; /* Optical alignment for play icon */
-}
-
-.enterprise-project-card:hover .enterprise-play-button {
-  transform: scale(1.1);
-  background: var(--netflix-white);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-}
-
-.enterprise-hover-info {
-  text-align: center;
-  color: var(--netflix-white);
-}
-
-.enterprise-hover-info h5 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: var(--spacing-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.enterprise-hover-info p {
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  font-size: 0.9rem;
-}
+/* Note: Enterprise styles have been replaced with timeline card design */
 
 /* ==========================================================================
    Skills Section - Netflix Badge Style
@@ -1151,25 +1018,25 @@ img {
 .skill-badge {
   padding: 12px 24px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-secondary);
   border-radius: var(--radius-xl);
   color: var(--text-primary);
   font-weight: 600;
   font-size: 0.9rem;
-  transition: transform var(--transition-smooth), background-color var(--transition-smooth), color var(--transition-smooth);
+  transition: all var(--transition-smooth);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  contain: layout style;
-  will-change: transform;
+  box-shadow: var(--shadow-sm);
 }
+
 
 .skill-badge:hover {
   background: var(--gradient-netflix);
   color: var(--netflix-white);
   border-color: var(--netflix-red);
   transform: translateY(-3px);
-  box-shadow: var(--shadow-netflix);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ==========================================================================
@@ -1279,7 +1146,6 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
-  backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
 }
@@ -1549,7 +1415,6 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: var(--spacing-xl);
   border-radius: var(--radius-md);
-  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
 }
@@ -1731,6 +1596,14 @@ img {
   color: var(--netflix-red);
 }
 
+
+body {
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+
 /* ==========================================================================
    Responsive Design - Mobile First
    ========================================================================== */
@@ -1757,14 +1630,7 @@ img {
     gap: var(--spacing-xl);
   }
 
-  .enterprise-projects-container {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-md);
-  }
-
-  .enterprise-project-card {
-    height: 280px;
-  }
+  /* Timeline cards now use project card responsive design */
 
   .projects-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1843,13 +1709,7 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .enterprise-projects-container {
-    grid-template-columns: 1fr;
-  }
-
-  .enterprise-project-card {
-    height: 250px;
-  }
+  /* Timeline cards inherit project card mobile styles */
 
   .form-grid {
     grid-template-columns: 1fr;
@@ -1987,11 +1847,38 @@ textarea:focus-visible {
 .contact-form-netflix {
   max-width: 500px;
   margin: 0 auto;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.05),
+    rgba(20, 20, 20, 0.3)
+  );
+
+  border: 1px solid;
+  border-image: var(--border-secondary) 1;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
 }
+
+.contact-form-netflix::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(229, 9, 20, 0.1);
+  background-size: 400% 400%;
+  opacity: 0.05;
+  border-radius: var(--radius-lg);
+}
+
 
 .form-group-netflix {
   position: relative;
   margin-bottom: var(--spacing-lg);
+  z-index: 2;
 }
 
 .form-group-netflix input,
@@ -1999,20 +1886,24 @@ textarea:focus-visible {
   width: 100%;
   padding: 20px 16px 8px 16px;
   background: rgba(42, 42, 42, 0.8);
-  border: 1px solid rgba(128, 128, 128, 0.4);
-  border-radius: 4px;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-primary);
   font-size: 16px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-smooth);
   outline: none;
   box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
 }
+
 
 .form-group-netflix input:focus,
 .form-group-netflix textarea:focus {
   border-color: var(--netflix-red);
-  background: rgba(42, 42, 42, 1);
+  background: rgba(42, 42, 42, 0.9);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .form-group-netflix label {
@@ -2051,30 +1942,35 @@ textarea:focus-visible {
 
 .btn-netflix-form {
   width: 100%;
-  background: var(--netflix-red);
+  background: var(--gradient-netflix);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   padding: 16px 24px;
   color: var(--netflix-white);
   font-family: var(--font-primary);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-smooth);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+  box-shadow: var(--shadow-md);
 }
+
 
 .btn-netflix-form:hover {
   background: var(--netflix-red-light);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
 }
 
 .btn-netflix-form:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.98);
+  transition-duration: 0.1s;
 }
+
 
 /* Healthcare/Education Theme Enhancements */
 .healthcare-accent {
@@ -2597,6 +2493,7 @@ textarea:focus-visible {
   text-align: center;
 }
 
+
 /* Special styling for first two categories (Healthcare & Education) */
 .skills-category:nth-child(1) {
   border-left: 4px solid #4CAF50;
@@ -2644,217 +2541,275 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
-   Enhanced Professional Timeline
+   Professional Experience - Netflix Style with Hover Effects
    ========================================================================== */
 
-.timeline-subtitle {
-  color: var(--text-secondary);
-  font-size: 1rem;
-  margin-bottom: var(--spacing-xl);
-  text-align: center;
-}
-
-.timeline-container {
-  position: relative;
+.professional-experience {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
 }
 
-.timeline-card {
+.experience-item {
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+  border-left: 3px solid transparent;
+  transition: all var(--transition-smooth);
   position: relative;
-  padding-left: 60px;
+  overflow: hidden;
 }
 
-.timeline-indicator {
+.experience-item::before {
+  content: '';
   position: absolute;
+  top: 0;
   left: 0;
-  top: 20px;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.05) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+  pointer-events: none;
+}
+
+.experience-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--netflix-red);
+  border-left-color: var(--netflix-red);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-xl), 0 0 20px rgba(229, 9, 20, 0.2);
+}
+
+.experience-item:hover::before {
+  opacity: 1;
+}
+
+.experience-header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 2;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-md);
 }
 
-.timeline-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 3px solid var(--netflix-dark);
-  position: relative;
-  z-index: 3;
-}
-
-.timeline-dot.healthcare-bg {
-  background: linear-gradient(135deg, #4CAF50, #66BB6A);
-}
-
-.timeline-dot.education-bg {
-  background: linear-gradient(135deg, #2196F3, #42A5F5);
-}
-
-.timeline-dot.security-bg {
-  background: linear-gradient(135deg, #FF9800, #FFB74D);
-}
-
-.timeline-line {
-  width: 2px;
-  height: 60px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  margin-top: 8px;
-}
-
-.timeline-indicator.current .timeline-dot {
-  width: 20px;
-  height: 20px;
-  box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
-  50% { box-shadow: 0 0 25px rgba(76, 175, 80, 0.7); }
-  100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
-}
-
-.timeline-info {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  flex: 0 0 auto;
-}
-
-.company-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 16px;
-  opacity: 0.9;
-}
-
-.company-logo.healthcare-logo {
-  background: linear-gradient(135deg, #4CAF50, #66BB6A);
-}
-
-.company-logo.education-logo {
-  background: linear-gradient(135deg, #2196F3, #42A5F5);
-}
-
-.company-logo.security-logo {
-  background: linear-gradient(135deg, #FF9800, #FFB74D);
-}
-
-.timeline-details {
-  flex: 1;
-}
-
-.timeline-period {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.timeline-role {
-  font-size: 1.1rem;
+.experience-title {
   color: var(--text-primary);
-  font-weight: 700;
-  margin-top: 2px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+  transition: color var(--transition-fast);
+  position: relative;
+  z-index: 1;
 }
 
-.achievement-stats {
+.experience-item:hover .experience-title {
+  color: var(--netflix-red-light);
+}
+
+.experience-period {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Enhanced Achievement Items */
+.experience-achievements {
+  margin-bottom: var(--spacing-md);
+}
+
+.achievement-item {
   display: flex;
+  align-items: flex-start;
   gap: var(--spacing-sm);
-  margin: 8px 0;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-smooth);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  opacity: 1;
+  max-height: 200px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.achievement-item.hidden {
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
+  padding: 0 var(--spacing-sm);
+  transform: translateY(-10px);
+}
+
+.achievement-item.visible {
+  opacity: 1;
+  max-height: 200px;
+  transform: translateY(0);
+}
+
+.achievement-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-secondary);
+}
+
+.achievement-item i {
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.achievement-item:hover i {
+  transform: scale(1.1);
+}
+
+.achievement-item span {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 0.9rem;
+  transition: color var(--transition-fast);
+}
+
+.achievement-item:hover span {
+  color: var(--text-primary);
+}
+
+/* Show More/Less Toggle Button */
+.experience-toggle {
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-primary);
+}
+
+.toggle-btn:hover {
+  background: var(--netflix-red);
+  border-color: var(--netflix-red);
+  color: var(--netflix-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
+}
+
+.toggle-icon {
+  font-size: 0.75rem;
+  transition: transform var(--transition-smooth);
+}
+
+.toggle-btn.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Experience Highlights */
+.experience-highlights {
+  display: flex;
+  gap: var(--spacing-xs);
   flex-wrap: wrap;
 }
 
-.achievement {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.03);
+.highlight {
   padding: 4px 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-xs);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-secondary);
+  transition: all var(--transition-fast);
+  position: relative;
+  z-index: 1;
 }
 
-.achievement i {
-  color: var(--netflix-red);
-  font-size: 14px;
+.experience-item:hover .highlight {
+  background: rgba(229, 9, 20, 0.1);
+  border-color: var(--netflix-red);
+  color: var(--netflix-red-light);
+  transform: translateY(-1px);
 }
 
-/* Themed gradients and tags */
-.healthcare-gradient {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
-}
-
-.education-gradient {
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05));
-}
-
-.security-gradient {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
-}
-
-.healthcare-tag {
-  border-color: #4CAF50;
-  color: #4CAF50;
+/* Themed highlights for different companies */
+.healthcare-highlight {
   background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #81C784;
 }
 
-.education-tag {
-  border-color: #2196F3;
-  color: #2196F3;
+.education-highlight {
   background: rgba(33, 150, 243, 0.1);
+  border-color: rgba(33, 150, 243, 0.3);
+  color: #64B5F6;
 }
 
-.security-tag {
-  border-color: #FF9800;
-  color: #FF9800;
-  background: rgba(255, 152, 0, 0.1);
+.security-highlight {
+  background: rgba(156, 39, 176, 0.1);
+  border-color: rgba(156, 39, 176, 0.3);
+  color: #BA68C8;
 }
 
-/* Hide timeline line for last card */
-.timeline-card:last-child .timeline-line {
-  display: none;
-}
-
-/* Responsive timeline */
+/* Responsive */
 @media (max-width: 768px) {
-  .timeline-card {
-    padding-left: 40px;
-  }
-
-  .timeline-indicator {
-    left: -5px;
-  }
-
-  .timeline-dot {
-    width: 12px;
-    height: 12px;
-  }
-
-  .timeline-indicator.current .timeline-dot {
-    width: 16px;
-    height: 16px;
-  }
-
-  .company-logo {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
-  }
-
-  .achievement-stats {
+  .experience-header {
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-xs);
+  }
+
+  .experience-title {
+    font-size: 1rem;
+  }
+
+  .experience-period {
+    font-size: 0.85rem;
+  }
+
+  .achievement-item {
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .achievement-item span {
+    font-size: 0.85rem;
+  }
+
+  .toggle-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+  }
+
+  /* Reduce hover scale on mobile for better UX */
+  .experience-item:hover {
+    transform: translateY(-3px) scale(1.01);
+  }
+
+  /* Disable hover effects on mobile for better performance */
+  .achievement-item:hover,
+  .toggle-btn:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.03);
   }
 }
+

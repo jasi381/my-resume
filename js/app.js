@@ -21,6 +21,7 @@ class NetflixPortfolioApp {
     this.setupFormHandling();
     this.setupSmoothScrolling();
     this.setupNetflixEffects();
+    this.setupExperienceToggle();
   }
 
   setupEventListeners() {
@@ -259,6 +260,7 @@ class NetflixPortfolioApp {
     submitButton.textContent = 'Sending...';
     submitButton.disabled = true;
 
+
     // Simulate form submission (replace with actual form handling)
     setTimeout(() => {
       this.showFormFeedback('success', 'Message sent successfully! I\'ll get back to you soon.');
@@ -267,6 +269,7 @@ class NetflixPortfolioApp {
       // Reset button
       submitButton.textContent = originalText;
       submitButton.disabled = false;
+
     }, 2000);
   }
 
@@ -318,6 +321,126 @@ class NetflixPortfolioApp {
 
     // Add subtle parallax to hero section
     this.setupParallaxEffects();
+  }
+
+  setupExperienceToggle() {
+    // Professional Experience Show More/Less functionality
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = button.getAttribute('data-target');
+        const experienceItem = document.querySelector(`[data-experience="${target}"]`);
+
+        if (!experienceItem) return;
+
+        const hiddenItems = experienceItem.querySelectorAll('.achievement-item.hidden');
+        const visibleItems = experienceItem.querySelectorAll('.achievement-item.visible');
+        const toggleText = button.querySelector('.toggle-text');
+        const toggleIcon = button.querySelector('.toggle-icon');
+
+        // Toggle expanded state
+        const isExpanded = button.classList.contains('expanded');
+
+        if (isExpanded) {
+          // Collapse: Hide additional items (those that are currently visible but were originally hidden)
+          const allItems = experienceItem.querySelectorAll('.achievement-item');
+          const itemsToHide = Array.from(allItems).slice(2); // Hide everything after the first 2 items
+
+          itemsToHide.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add('hidden');
+              item.classList.remove('visible');
+            }, index * 50); // Staggered animation
+          });
+
+          // Update button
+          button.classList.remove('expanded');
+          toggleText.textContent = 'Show More';
+          toggleIcon.style.transform = 'rotate(0deg)';
+
+          // Add subtle animation feedback
+          button.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            button.style.transform = '';
+          }, 150);
+
+        } else {
+          // Expand: Show additional items
+          hiddenItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.remove('hidden');
+              item.classList.add('visible');
+            }, index * 50); // Staggered animation
+          });
+
+          // Update button
+          button.classList.add('expanded');
+          toggleText.textContent = 'Show Less';
+          toggleIcon.style.transform = 'rotate(180deg)';
+
+          // Add subtle animation feedback
+          button.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            button.style.transform = '';
+          }, 150);
+        }
+
+        // Add ripple effect for better UX
+        this.createRippleEffect(button, e);
+      });
+    });
+  }
+
+  createRippleEffect(button, event) {
+    // Netflix-style ripple effect for buttons
+    const ripple = document.createElement('span');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+
+    ripple.style.cssText = `
+      position: absolute;
+      width: ${size}px;
+      height: ${size}px;
+      left: ${x}px;
+      top: ${y}px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: scale(0);
+      pointer-events: none;
+      animation: ripple 0.6s ease-out;
+    `;
+
+    // Add ripple animation keyframes if not already present
+    if (!document.querySelector('#ripple-styles')) {
+      const style = document.createElement('style');
+      style.id = 'ripple-styles';
+      style.textContent = `
+        @keyframes ripple {
+          to {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    button.style.position = 'relative';
+    button.style.overflow = 'hidden';
+    button.appendChild(ripple);
+
+    // Remove ripple after animation
+    setTimeout(() => {
+      if (ripple.parentNode) {
+        ripple.parentNode.removeChild(ripple);
+      }
+    }, 600);
   }
 
   setupProjectCardEffects() {
@@ -539,6 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize advanced animations
   new NetflixAnimations();
 
+
   // Add loading animation completion
   document.body.classList.add('loaded');
 
@@ -558,24 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
     🚀 Ready for deployment!
   `);
 
-  // Add subtle cursor effects
-  setupCursorEffects();
 });
-
-// Netflix-style cursor effects
-function setupCursorEffects() {
-  const interactiveElements = document.querySelectorAll('a, button, .project-card, .skill-badge');
-
-  interactiveElements.forEach(element => {
-    element.addEventListener('mouseenter', () => {
-      document.body.style.cursor = 'pointer';
-    });
-
-    element.addEventListener('mouseleave', () => {
-      document.body.style.cursor = 'default';
-    });
-  });
-}
 
 // Performance monitoring (optional)
 if ('performance' in window) {

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(css-validator:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

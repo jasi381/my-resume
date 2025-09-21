@@ -3,60 +3,184 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Page Not Found</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404 - Page Not Found | Jasmeet Singh</title>
+  <meta name="description" content="Page not found - Let's get back to the portfolio">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      line-height: 1.2;
-      margin: 0;
+    /* Netflix-Style 404 Page - Clean & Compact */
+    :root {
+      --netflix-red: #E50914;
+      --netflix-red-hover: #FF1E2D;
+      --netflix-black: #000000;
+      --netflix-dark: #141414;
+      --netflix-gray: #333333;
+      --netflix-white: #FFFFFF;
+      --text-secondary: #B3B3B3;
+      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
-    html {
-      color: #888;
-      display: table;
-      font-family: sans-serif;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
       height: 100%;
-      text-align: center;
-      width: 100%;
+      font-family: var(--font-primary), sans-serif;
+      background: var(--netflix-black);
+      color: var(--netflix-white);
+      overflow-x: hidden;
     }
 
     body {
-      display: table-cell;
-      vertical-align: middle;
-      margin: 2em auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    h1 {
-      color: #555;
-      font-size: 2em;
-      font-weight: 400;
+    .error-container {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem 1rem;
     }
 
-    p {
-      margin: 0 auto;
-      width: 280px;
+    .error-code {
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 700;
+      color: var(--netflix-red);
+      margin-bottom: 1rem;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(229, 9, 20, 0.3);
     }
 
-    @media only screen and (max-width: 280px) {
+    .error-title {
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
 
-      body,
-      p {
-        width: 95%;
+    .error-message {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--font-primary), sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--netflix-red);
+      color: var(--netflix-white);
+    }
+
+    .btn-primary:hover {
+      background: var(--netflix-red-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--netflix-white);
+      border: 1px solid var(--netflix-gray);
+    }
+
+    .btn-secondary:hover {
+      background: var(--netflix-dark);
+      border-color: var(--netflix-red);
+      transform: translateY(-1px);
+    }
+
+    /* Simple background gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+      .error-container {
+        padding: 1rem;
       }
 
-      h1 {
-        font-size: 1.5em;
-        margin: 0 0 0.3em;
+      .error-actions {
+        flex-direction: column;
+        align-items: center;
       }
 
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+
+      .error-message {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus {
+      outline: 2px solid var(--netflix-red);
+      outline-offset: 2px;
     }
   </style>
 </head>
 
 <body>
-  <h1>Page Not Found</h1>
-  <p>Sorry, but the page you were trying to view does not exist.</p>
+  <div class="error-container">
+    <div class="error-code">404</div>
+    <h1 class="error-title">Page Not Found</h1>
+    <p class="error-message">
+      Sorry, the page you're looking for doesn't exist.
+      Let's get you back to the portfolio.
+    </p>
+    <div class="error-actions">
+      <a href="/" class="btn btn-primary">
+        Return Home
+      </a>
+      <a href="/#projects" class="btn btn-secondary">
+        View Projects
+      </a>
+    </div>
+  </div>
 </body>
 
 </html>
-<!-- IE needs 512+ bytes: https://docs.microsoft.com/archive/blogs/ieinternals/friendly-http-error-pages -->
